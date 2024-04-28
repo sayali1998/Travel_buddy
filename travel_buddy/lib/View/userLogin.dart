@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_buddy/View/register.dart';
 import 'package:travel_buddy/ViewModel/firebase_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -22,12 +23,36 @@ class UserLoginPage extends State<UserLogin> {
       try {
         UserCredential userCredential = await signInWithEmailPassword(_email, _password);
         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(userId: userCredential.user!.uid)));
+      } on FirebaseAuthException catch (e) {
+        _showErrorDialog(e.message ?? 'Login failed');
       } finally {
         setState(() => _isLoading = false);
       }
     }
   }
 
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('An Error Occurred'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  void registerScreen(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +71,7 @@ class UserLoginPage extends State<UserLogin> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                Image.asset('assets/profile.png', width: 100, height: 100),
+                Image.asset('assets/destination.png', width: 100, height: 100),
                 SizedBox(height: 40),
                 Text(
                   'Welcome Back!',
@@ -114,13 +139,13 @@ class UserLoginPage extends State<UserLogin> {
                               ),
                             ),
                       SizedBox(height: 15),
-                      // // TextButton(
-                      // //   onPressed: ,
-                      // //   style: TextButton.styleFrom(
-                      // //     foregroundColor: Theme.of(context).primaryColor,
-                      // //   ),
-                      //   child: Text('New User? Register Here'),
-                      // ),
+                      TextButton(
+                        onPressed: registerScreen ,
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).primaryColor,
+                        ),
+                        child: Text('New User? Register Here'),
+                      ),
                     ],
                   ),
                 ),
