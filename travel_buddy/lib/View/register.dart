@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:travel_buddy/View/userProfile.dart';
+import 'package:travel_buddy/View/user_register.dart';
 import 'package:travel_buddy/ViewModel/firebase_functions.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -23,8 +23,7 @@ class RegisterScreen extends State<RegisterPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            //Need to send user details to UserProfileScreen
-            builder: (context) => UserProfileScreen(),
+            builder: (context) => UserRegisterScreen(),
           ),
         );
       } on FirebaseAuthException catch (e) {

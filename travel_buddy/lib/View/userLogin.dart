@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_buddy/View/home.dart';
 import 'package:travel_buddy/View/register.dart';
 import 'package:travel_buddy/ViewModel/firebase_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,7 +23,8 @@ class UserLoginPage extends State<UserLogin> {
       setState(() => _isLoading = true);
       try {
         UserCredential userCredential = await signInWithEmailPassword(_email, _password);
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen(userId: userCredential.user!.uid)));
+        Navigator.pushReplacement(context, 
+            MaterialPageRoute(builder: (context) => HomePage(userId: userCredential.user!.uid)));
       } on FirebaseAuthException catch (e) {
         _showErrorDialog(e.message ?? 'Login failed');
       } finally {
