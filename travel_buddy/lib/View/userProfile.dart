@@ -9,6 +9,6 @@ class UserProfileScreen extends StatefulWidget {
 class UserProfile extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    throw UnimplementedError();
+    return Text("USer Profile");
   }
 }
