@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_buddy/View/explore.dart';
-import 'package:travel_buddy/View/feedback.dart';
+import 'package:travel_buddy/View/groups.dart';
 import 'package:travel_buddy/View/userProfile.dart';
+import 'package:travel_buddy/View/wishlist.dart';
 
 class HomePage extends StatefulWidget {
   final String userId;
@@ -24,8 +25,8 @@ class HomeScreen extends State<HomePage> {
   Widget build(BuildContext context) {
     final List<Widget> widgetOptions = <Widget>[
       ExplorePage(userId: widget.userId),
-      FeedbackPage(),
-      FeedbackPage(),
+      WishlistScreen(userId: widget.userId),
+      GroupScreen(userId: widget.userId),
       UserProfileScreen(userId: widget.userId),
     ];
 
@@ -44,8 +45,8 @@ class HomeScreen extends State<HomePage> {
             label: 'Favorites',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
+            icon: Icon(Icons.group),
+            label: 'Group',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle),

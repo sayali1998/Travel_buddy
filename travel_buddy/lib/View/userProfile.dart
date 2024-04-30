@@ -51,7 +51,7 @@ class UserProfile extends State<UserProfileScreen> {
           children: <Widget>[
             userDetails!['profileImageUrl'] != null
                 ? Image.network(userDetails!['profileImageUrl'], height: 250, fit: BoxFit.cover)
-                : Placeholder(fallbackHeight: 200), // Placeholder in case image is not available
+                : Placeholder(fallbackHeight: 200), 
             ListTile(
               title: Text('Username'),
               subtitle: Text(userDetails!['username'] ?? 'N/A'),

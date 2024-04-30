@@ -78,7 +78,7 @@ try {
     };
     var body = json.encode({
       "includedTypes": ["restaurant"],
-      "maxResultCount": 20,
+      "maxResultCount": 15,
       "locationRestriction": {
         "circle": {
           "center": {
