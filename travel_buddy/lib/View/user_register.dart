@@ -10,7 +10,8 @@ import 'package:flutter/services.dart';
 
 class UserRegisterScreen extends StatefulWidget {
   final String userId;
-  UserRegisterScreen({Key? key, required this.userId}) : super(key: key);
+  final String username;
+  UserRegisterScreen({Key? key, required this.userId, required this.username}) : super(key: key);
 
   @override
   UserRegister createState() => UserRegister();
@@ -108,7 +109,7 @@ class UserRegister extends State<UserRegisterScreen> {
                       if(_image == null){
                         await _loadPlaceholderImage(); 
                       }
-                      uploadUserData(_username, _age, _gender, _homeLocation, _image);
+                      uploadUserData(_username, _age, _gender, _homeLocation, _image, widget.username);
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

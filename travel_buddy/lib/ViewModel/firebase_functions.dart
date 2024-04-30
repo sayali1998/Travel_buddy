@@ -28,8 +28,28 @@ Future<String?> uploadImage(File image, String uuid) async {
   }
 }
 
+Future<Map<String, dynamic>?> fetchUserData(String userID) async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-Future<void> uploadUserData(String username, String age, String gender, String homeLocation, File? image) async {
+  try {
+    DocumentSnapshot userDoc = await firestore.collection('users').doc(userID).get();
+
+    if (userDoc.exists) {
+      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+      return userData;
+    } else {
+      print('No user found for the given userID');
+      return null;
+    }
+  } catch (e) {
+    print('Error fetching user data: $e');
+    return null;
+  }
+}
+
+
+
+Future<void> uploadUserData(String username, String age, String gender, String homeLocation, File? image, String email) async {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final User? currentUser = auth.currentUser;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -45,5 +65,6 @@ Future<void> uploadUserData(String username, String age, String gender, String h
     'gender': gender,
     'homeLocation': homeLocation,
     'profileImageUrl': imageUrl,
+    'email': email,
   });
 }

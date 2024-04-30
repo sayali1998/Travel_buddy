@@ -128,7 +128,7 @@ Widget build(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 5),  
+                SizedBox(height: 2),  
                 Text(rating),
               ],
             ),

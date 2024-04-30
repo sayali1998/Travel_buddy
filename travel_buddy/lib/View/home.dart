@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeScreen extends State<HomePage> {
-  int _selectedIndex = 0; // Initial index for ExplorePage
+  int _selectedIndex = 0; 
 
   void _onItemTapped(int index) {
     setState(() {
@@ -25,8 +25,8 @@ class HomeScreen extends State<HomePage> {
     final List<Widget> widgetOptions = <Widget>[
       ExplorePage(userId: widget.userId),
       FeedbackPage(),
-      UserProfileScreen(),
       FeedbackPage(),
+      UserProfileScreen(userId: widget.userId),
     ];
 
     return Scaffold(
@@ -54,6 +54,7 @@ class HomeScreen extends State<HomePage> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
+        unselectedItemColor: Colors.amberAccent,
         onTap: _onItemTapped,
       ),
     );

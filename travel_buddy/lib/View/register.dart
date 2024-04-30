@@ -23,7 +23,7 @@ class RegisterScreen extends State<RegisterPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => UserRegisterScreen(userId: newUser!.uid),
+            builder: (context) => UserRegisterScreen(userId: newUser!.uid, username: _email,),
           ),
         );
       } on FirebaseAuthException catch (e) {
