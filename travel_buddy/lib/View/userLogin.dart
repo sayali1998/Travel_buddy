@@ -3,6 +3,7 @@ import 'package:travel_buddy/View/home.dart';
 import 'package:travel_buddy/View/register.dart';
 import 'package:travel_buddy/ViewModel/firebase_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserLogin extends StatefulWidget {
   const UserLogin({Key? key, required this.title}) : super(key: key);
@@ -18,11 +19,28 @@ class UserLoginPage extends State<UserLogin> {
   String _password = '';
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userId = prefs.getString('userId');
+    if (userId != null) {
+      Navigator.pushReplacement(context, 
+          MaterialPageRoute(builder: (context) => HomePage(userId: userId)));
+    }
+  }
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
         UserCredential userCredential = await signInWithEmailPassword(_email, _password);
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('userId', userCredential.user!.uid);
         Navigator.pushReplacement(context, 
             MaterialPageRoute(builder: (context) => HomePage(userId: userCredential.user!.uid)));
       } on FirebaseAuthException catch (e) {

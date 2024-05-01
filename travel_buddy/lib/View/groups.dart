@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:travel_buddy/View/group_details.dart';
 import 'package:travel_buddy/ViewModel/firebase_functions.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 
 class GroupScreen extends StatefulWidget {
   final String userId;
@@ -19,6 +21,11 @@ class GroupScreenPage extends State<GroupScreen> {
   DateTime? startDate;
   DateTime? endDate;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final List<String> assetImages = [
+    'assets/group1.png',
+    'assets/group2.png',
+  ];
 
   @override
   void initState() {
@@ -162,6 +169,16 @@ class GroupScreenPage extends State<GroupScreen> {
   }
 
 
+  Future<void> fetchGroups() async {
+    setState(() {
+      userGroup = fetchUserGroups(widget.userId);
+    });
+    await userGroup;  
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,13 +193,67 @@ class GroupScreenPage extends State<GroupScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text("Error loading groups: ${snapshot.error}"));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return ListView(
+            return  RefreshIndicator(
+            onRefresh: fetchGroups,  
+            child: ListView(
               children: snapshot.data!.map((item) {
-                return ListTile(
-                  title: Text(item['groupName']),
-                  subtitle: Text("Group ID: ${item['groupId']}"),
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupDetails(groupId: item['groupId']),
+                        ),
+                      );
+                    },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 5,
+                    margin: EdgeInsets.all(10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.asset(
+                              assetImages[Random().nextInt(assetImages.length)],
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  item['groupName'],
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  "Group ID: ${item['groupId']}",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               }).toList(),
+            ),
             );
           } else {
             return Center(child: Text("No Groups"));

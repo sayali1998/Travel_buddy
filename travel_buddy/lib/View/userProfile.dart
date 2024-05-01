@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Ensure you have this import
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -35,46 +35,73 @@ class UserProfile extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (userDetails == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('User Profile'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('User Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.deepOrange, // Changed to deep orange
+        elevation: 0,
+      ),
+      body: userDetails == null
+        ? Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+          child: Column(
+            children: [
+              userDetails!['profileImageUrl'] != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(25), // Simplified radius
+                      child: Image.network(
+                        userDetails!['profileImageUrl'],
+                        height: 250,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    )
+                  : Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.orange[200], // Adjusted color
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Icon(Icons.person, size: 120, color: Colors.orange[800]), // Adjusted color
+                    ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    profileDetailTile('Username', userDetails!['username']),
+                    profileDetailTile('Email', userDetails!['email']),
+                    profileDetailTile('Age', '${userDetails!['age']}'),
+                    profileDetailTile('Gender', userDetails!['gender']),
+                    profileDetailTile('Home Location', userDetails!['homeLocation']),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('User Profile'),
-        ),
-        body: ListView(
-          children: <Widget>[
-            userDetails!['profileImageUrl'] != null
-                ? Image.network(userDetails!['profileImageUrl'], height: 250, fit: BoxFit.cover)
-                : Placeholder(fallbackHeight: 200), 
-            ListTile(
-              title: Text('Username'),
-              subtitle: Text(userDetails!['username'] ?? 'N/A'),
-            ),
-            ListTile(
-              title: Text('Email'),
-              subtitle: Text(userDetails!['email'] ?? 'N/A'),
-            ),
-            ListTile(
-              title: Text('Age'),
-              subtitle: Text('${userDetails!['age'] ?? 'N/A'}'),
-            ),
-            ListTile(
-              title: Text('Gender'),
-              subtitle: Text(userDetails!['gender'] ?? 'N/A'),
-            ),
-            ListTile(
-              title: Text('Home Location'),
-              subtitle: Text(userDetails!['homeLocation'] ?? 'N/A'),
-            ),
-          ],
-        ),
-      );
-    }
+    );
+  }
+
+  Widget profileDetailTile(String title, String? value) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),  
+      decoration: BoxDecoration(
+        color: Colors.yellow[100], 
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(title, style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.w600)), 
+        subtitle: Text(value ?? 'N/A', style: TextStyle(fontSize: 16, color: Colors.black87)), 
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+    );
   }
 }
