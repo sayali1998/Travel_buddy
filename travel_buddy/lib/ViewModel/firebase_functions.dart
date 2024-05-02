@@ -47,8 +47,6 @@ Future<Map<String, dynamic>?> fetchUserData(String userID) async {
   }
 }
 
-
-
 Future<void> uploadUserData(String username, String age, String gender, String homeLocation, File? image, String email) async {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final User? currentUser = auth.currentUser;

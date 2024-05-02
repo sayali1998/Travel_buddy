@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:travel_buddy/View/custom_view/user_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_buddy/View/hidden_gem_dialog.dart';
+import 'package:travel_buddy/View/userLogin.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -33,75 +37,91 @@ class UserProfile extends State<UserProfileScreen> {
     }
   }
 
+  void _signOut() async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userId');
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => UserLogin(title: "Login")),
+      (Route<dynamic> route) => false, 
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Profile', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.deepOrange, // Changed to deep orange
-        elevation: 0,
+        backgroundColor: Color(0xFFFAFAFA),
+        elevation: 0, 
+        title: Text('Profile', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app, color: Colors.black54),
+            onPressed: _signOut,
+          ),
+        ],
       ),
+      backgroundColor: Colors.white, 
       body: userDetails == null
         ? Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              userDetails!['profileImageUrl'] != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(25), // Simplified radius
-                      child: Image.network(
-                        userDetails!['profileImageUrl'],
-                        height: 250,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
-                    )
-                  : Container(
-                      height: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.orange[200], // Adjusted color
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: Icon(Icons.person, size: 120, color: Colors.orange[800]), // Adjusted color
+              Container(
+                color: Color(0xFFFAFAFA), 
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      
                     ),
+                    SizedBox(height: 0),
+                    userDetails!['profileImageUrl'] != null
+                        ? CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage(userDetails!['profileImageUrl']),
+                          )
+                        : CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.deepPurple[200],
+                            child: Icon(Icons.person, size: 60, color: Colors.deepPurple),
+                          ),
+                    SizedBox(height: 10),
+                    Text(userDetails!['username'] ?? 'N/A', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text(userDetails!['email'] ?? 'N/A', style: TextStyle(color: Colors.black54)),
+                  ],
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    profileDetailTile('Username', userDetails!['username']),
-                    profileDetailTile('Email', userDetails!['email']),
-                    profileDetailTile('Age', '${userDetails!['age']}'),
-                    profileDetailTile('Gender', userDetails!['gender']),
-                    profileDetailTile('Home Location', userDetails!['homeLocation']),
+                    UserInfoRow(label: 'Age:',  value:'${userDetails!['age']}'),
+                    UserInfoRow(label: 'Gender:', value: userDetails!['gender']),
+                    UserInfoRow(label: 'Home Location:', value: userDetails!['homeLocation']),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return HiddenGem(); 
+            },
+          );
+        },
+        child: Icon(Icons.diamond),
+      ),
     );
   }
 
-  Widget profileDetailTile(String title, String? value) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),  
-      decoration: BoxDecoration(
-        color: Colors.yellow[100], 
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Text(title, style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.w600)), 
-        subtitle: Text(value ?? 'N/A', style: TextStyle(fontSize: 16, color: Colors.black87)), 
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      ),
-    );
-  }
+  
 }
