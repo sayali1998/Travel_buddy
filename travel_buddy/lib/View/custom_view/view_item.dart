@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:travel_buddy/View/location_detail.dart';
 import 'package:travel_buddy/ViewModel/fetch_image.dart';
+import 'package:travel_buddy/ViewModel/firebase_functions.dart';
 
 class CategoryItem extends StatefulWidget {
   final List<dynamic> categoryList;
   final String categoryType;
-  const CategoryItem({Key? key, required this.categoryList, required this.categoryType}) : super(key: key);
+  final String userId;
+  const CategoryItem({Key? key, required this.categoryList, required this.categoryType, required this.userId}) : super(key: key);
 
   @override
   _CategoryItemState createState() => _CategoryItemState();
@@ -34,14 +36,16 @@ class _CategoryItemState extends State<CategoryItem> {
     );
   }
 
-  Widget buildCard(String imageUrl, dynamic place) {
-    return  InkWell(
+Widget buildCard(String imageUrl, dynamic place) {
+  String userId = widget.userId;
+
+  return InkWell(
     onTap: () {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => LocationDetailPage(place: place, categoryType: widget.categoryType,)),
+        MaterialPageRoute(builder: (context) => LocationDetailPage(place: place, categoryType: widget.categoryType)),
       );
     },
-    child:Card(
+    child: Card(
       child: Column(
         children: [
           Image.network(
@@ -55,9 +59,41 @@ class _CategoryItemState extends State<CategoryItem> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              place['displayName']['text'] ?? 'No name available',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  place['displayName']['text'] ?? 'No name available',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: fetchUserGroups(userId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                        return PopupMenuButton<String>(
+                          onSelected: (String result) {
+                            print("Selected group ID: $result");
+                            // Handle your action here, such as adding destination
+                          },
+                          itemBuilder: (BuildContext context) => snapshot.data!
+                            .map((group) => PopupMenuItem<String>(
+                              value: group['id'],
+                              child: Text(group['groupName']),
+                            ))
+                            .toList(),
+                          icon: const Icon(Icons.more_vert),
+                        );
+                      } else {
+                        return Text("No groups available");
+                      }
+                    } else if (snapshot.hasError) {
+                      return Text("Error loading groups");
+                    }
+                    return CircularProgressIndicator();
+                  },
+                ),
+              ],
             ),
           ),
           Text(
@@ -66,7 +102,11 @@ class _CategoryItemState extends State<CategoryItem> {
           ),
         ],
       ),
-    )
-    );
-  }
+    ),
+  );
+}
+
+
+
+
 }

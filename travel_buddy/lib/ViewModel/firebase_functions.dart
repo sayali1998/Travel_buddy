@@ -214,3 +214,18 @@ Future<void> uploadHiddenGem({
     print('Failed to upload Hidden Gem: ${e.toString()}');
   }
 }
+
+
+Future<void> addDestination(String groupId, String placeName) async {
+  print("Attempting to add destination. Group ID: $groupId, Place Name: $placeName");
+  try {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference places = firestore.collection('groups').doc(groupId).collection('places');
+    await places.add({
+      'name': placeName,
+    });
+  } catch (e) {
+    print('Failed to add destination: $e');
+  }
+}
+

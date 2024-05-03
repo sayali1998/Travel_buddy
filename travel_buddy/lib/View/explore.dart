@@ -162,7 +162,7 @@ class ExplorePageScreen extends State<ExplorePage> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text('Top Places', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.left),
                 ),
-                SizedBox(height: 200, child: CategoryItem(categoryList:_category, categoryType: _selectedCategoryType)),
+                SizedBox(height: 215, child: CategoryItem(categoryList:_category, categoryType: _selectedCategoryType, userId: widget.userId,)),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text('Hidden Gems', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.left),
