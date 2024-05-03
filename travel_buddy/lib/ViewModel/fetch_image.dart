@@ -28,3 +28,6 @@ Future<List<String>> fetchImageUrls(String query) async {
     throw Exception('Failed to load images');
   }
 }
+
+
+

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:location/location.dart';
 import 'package:travel_buddy/View/custom_view/view_item.dart';
+import 'package:travel_buddy/View/gems.dart';
+import 'package:travel_buddy/ViewModel/fetch_coordinates.dart';
 
 class ExplorePage extends StatefulWidget {
   final String userId;
@@ -16,6 +18,8 @@ class ExplorePageScreen extends State<ExplorePage> {
   late LocationData _currentLocation;
   List<dynamic> _category = [];
   final TextEditingController _searchController = TextEditingController();
+  String _selectedCategoryType = 'restaurant';
+  String _currentCity = 'Syracuse';  // Default city
 
   @override
   void initState() {
@@ -23,52 +27,43 @@ class ExplorePageScreen extends State<ExplorePage> {
     _getLocation();
   }
 
- void _getLocation() async {
+  void _getLocation() async {
     var location = new Location();
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
 
-// Check if location services are enabled
-_serviceEnabled = await location.serviceEnabled();
-print("Service enabled check: $_serviceEnabled");
-if (!_serviceEnabled) {
-  _serviceEnabled = await location.requestService();
-  print("Requested service enablement: $_serviceEnabled");
-  if (!_serviceEnabled) {
-    print("Location services are disabled after request.");
-    return;
-  }
-}
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
 
-// Check and request permission
-_permissionGranted = await location.hasPermission();
-print("Initial permission status: $_permissionGranted");
-if (_permissionGranted == PermissionStatus.denied) {
-  _permissionGranted = await location.requestPermission();
-  print("Requested permission status: $_permissionGranted");
-  if (_permissionGranted != PermissionStatus.granted) {
-    print("Location permission not granted.");
-    return;
-  }
-}
-
-try {
-  //_currentLocation = await location.getLocation().timeout(Duration(seconds: 30));
-  //print("Location obtained: Latitude: ${_currentLocation.latitude}, Longitude: ${_currentLocation.longitude}");
-  
-  //Need to change this so that it gets current coordinates
-  _currentLocation = LocationData.fromMap({
-  "latitude": 37.7749,
-  "longitude": -122.4194
-  });
-  _fetchCategories("restaurant");
-} catch (e) {
-  print('Exception during getting location: ${e.toString()}');
-}
-
+    try {
+      _currentLocation = LocationData.fromMap({
+        "latitude": 37.7749, 
+        "longitude": -122.4194
+      });
+      _fetchCategories("restaurant");
+    } catch (e) {
+      print('Exception during getting location: ${e.toString()}');
+    }
   }
 
   void _fetchCategories(String type) async {
+    if (_currentLocation == null) {
+      print("Location not set");
+      return;
+    }
+
     String url = 'https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyA4bO5sTk2V0EpxkcjuXJMKfqEE_fWuxVU';
     var headers = {
       'Content-Type': 'application/json',
@@ -80,8 +75,8 @@ try {
       "locationRestriction": {
         "circle": {
           "center": {
-            "latitude": 37.7937,//_currentLocation.latitude,
-            "longitude": -122.3965, //currentLocation.longitude
+            "latitude": _currentLocation.latitude,
+            "longitude": _currentLocation.longitude,
           },
           "radius": 500.0
         }
@@ -97,7 +92,20 @@ try {
       print('Failed to load places: ${response.body}');
     }
   }
- 
+
+  void handleSearch(String query) async {
+    var locationData = await getCoordinatesFromAddress(query);
+    if (locationData != null) {
+      setState(() {
+        _currentLocation = locationData;
+        _currentCity = query;  
+        _fetchCategories(_selectedCategoryType);
+      });
+    } else {
+      print("No valid location found for the query: $query");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,16 +117,41 @@ try {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  labelText: 'Search',
-                  suffixIcon: Icon(Icons.search),
+              child: Material(
+                elevation: 4.0,
+                borderRadius: BorderRadius.circular(30.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search), 
+                      onPressed: () => handleSearch(_searchController.text),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    handleSearch(value);
+                  },
                 ),
               ),
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start, 
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -129,59 +162,58 @@ try {
                   padding: const EdgeInsets.all(8.0),
                   child: Text('Top Places', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.left),
                 ),
-                SizedBox(height: 200, child: CategoryItem(categoryList:_category)),
+                SizedBox(height: 200, child: CategoryItem(categoryList:_category, categoryType: _selectedCategoryType)),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text('Hidden Gems', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.left),
                 ),
-                SizedBox(height: 200, child: CategoryItem(categoryList:[])),
+                SizedBox(height: 200, child: FirestoreItemList(city: _currentCity)),
               ],
             )
-
           ],
         ),
       ),
     );
   }
 
-Widget _buildCategoryList() {
-  List<Map<String, dynamic>> categories = [
-    {'name': 'Gym', 'icon': Icons.sports_gymnastics, 'type': 'gym'},
-    {'name': 'Cafe', 'icon': Icons.coffee, 'type': 'cafe'},
-    {'name': 'Park', 'icon': Icons.park_outlined, 'type': 'park'},
-    {'name': 'Banks', 'icon': Icons.money, 'type': 'bank'},
-  ];
+  Widget _buildCategoryList() {
+    List<Map<String, dynamic>> categories = [
+      {'name': 'Restaurants', 'icon': Icons.restaurant, 'type': 'restaurant'},
+      {'name': 'Gym', 'icon': Icons.sports_gymnastics, 'type': 'gym'},
+      {'name': 'Cafe', 'icon': Icons.coffee, 'type': 'cafe'},
+      {'name': 'Park', 'icon': Icons.park_outlined, 'type': 'park'},
+      {'name': 'Banks', 'icon': Icons.money, 'type': 'bank'},
+    ];
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: categories.length,
-      itemBuilder: (context, index) {
-        return InkWell(
-          onTap: () {
-            _fetchCategories(categories[index]['type']);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Chip(
-              avatar: Icon(categories[index]['icon'], color: Colors.white),
-              label: Text(categories[index]['name'], style: TextStyle(color: Colors.white)),
-              backgroundColor: Colors.amber,
-              padding: EdgeInsets.all(8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: Colors.amber),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {
+              setState(() {
+                _selectedCategoryType = categories[index]['type'];
+              });
+              _fetchCategories(categories[index]['type']);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Chip(
+                avatar: Icon(categories[index]['icon'], color: Colors.white),
+                label: Text(categories[index]['name'], style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.amber,
+                padding: EdgeInsets.all(8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.amber),
+                ),
               ),
             ),
-          ),
-        );
-      },
-    ),
-  );
+          );
+        },
+      ),
+    );
+  }
 }
-
-
-
-}
-

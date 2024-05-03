@@ -4,8 +4,8 @@ import 'package:travel_buddy/ViewModel/fetch_image.dart';
 
 class CategoryItem extends StatefulWidget {
   final List<dynamic> categoryList;
-
-  const CategoryItem({Key? key, required this.categoryList}) : super(key: key);
+  final String categoryType;
+  const CategoryItem({Key? key, required this.categoryList, required this.categoryType}) : super(key: key);
 
   @override
   _CategoryItemState createState() => _CategoryItemState();
@@ -38,7 +38,7 @@ class _CategoryItemState extends State<CategoryItem> {
     return  InkWell(
     onTap: () {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => LocationDetailPage(place: place)),
+        MaterialPageRoute(builder: (context) => LocationDetailPage(place: place, categoryType: widget.categoryType,)),
       );
     },
     child:Card(

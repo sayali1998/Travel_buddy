@@ -34,112 +34,141 @@ class GroupScreenPage extends State<GroupScreen> {
   }
 
   void _showAddGroupDialog() {
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: Text('Add New Group'),
-              content: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      TextFormField(
-                        controller: groupNameController,
-                        decoration: InputDecoration(labelText: "Group name"),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a group name';
-                          }
-                          return null;
-                        },
+  showDialog(
+  context: context,
+  builder: (dialogContext) {
+    return StatefulBuilder(
+      builder: (BuildContext context, StateSetter setState) {
+        return AlertDialog(
+          title: Text('Add New Group', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor)),
+          content: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  TextFormField(
+                    controller: groupNameController,
+                    decoration: InputDecoration(
+                      labelText: "Group name",
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
                       ),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: InputDecoration(labelText: "Add user emails (comma-separated)"),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter at least one email';
-                          }
-                          // Additional email validation logic can be implemented here
-                          return null;
-                        },
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
                       ),
-                      TextFormField(
-                        controller: budgetController,
-                        decoration: InputDecoration(labelText: "Budget"),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a budget';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number';
-                          }
-                          return null;
-                        },
-                      ),
-                      ListTile(
-                        title: Text("Start Date: ${startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : 'Not set'}"),
-                        trailing: Icon(Icons.calendar_today),
-                        onTap: () => _selectDate(context, setState, true),
-                      ),
-                      ListTile(
-                        title: Text("End Date: ${endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : 'Not set'}"),
-                        trailing: Icon(Icons.calendar_today),
-                        onTap: () => _selectDate(context, setState, false),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Cancel'),
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                ),
-                TextButton(
-                  child: Text('Add'),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      try {
-                        String groupId = await addGroup(
-                          groupName: groupNameController.text,
-                          budget: budgetController.text,
-                          startDate: startDate,
-                          endDate: endDate,
-                        );
-                        
-                        List<String> userEmails = emailController.text.split(',').map((e) => e.trim()).toList();
-                        addUsersToGroup(groupId, userEmails, groupNameController.text, widget.userId);
-                        
-                        Navigator.of(dialogContext).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Group successfully added"))
-                        );
-                        groupNameController.clear();
-                        emailController.clear();
-                        budgetController.clear();
-                        startDate = null;
-                        endDate = null;
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Failed to add group: $e"))
-                        );
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a group name';
                       }
-                    
-                    }
-                  },
-                ),
-              ],
-            );
-          },
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: "Add user emails (comma-separated)",
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter at least one email';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: budgetController,
+                    decoration: InputDecoration(
+                      labelText: "Budget",
+                      border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColorLight, width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
+                      ),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a budget';
+                      }
+                      if (double.tryParse(value) == null) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  ListTile(
+                    title: Text("Start Date: ${startDate != null ? DateFormat('yyyy-MM-dd').format(startDate!) : 'Not set'}"),
+                    trailing: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+                    onTap: () => _selectDate(context, setState, true),
+                  ),
+                  ListTile(
+                    title: Text("End Date: ${endDate != null ? DateFormat('yyyy-MM-dd').format(endDate!) : 'Not set'}"),
+                    trailing: Icon(Icons.calendar_today, color: Theme.of(context).primaryColor),
+                    onTap: () => _selectDate(context, setState, false),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel', style: TextStyle(color: Colors.red)),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            TextButton(
+              child: Text('Add', style: TextStyle(color: Colors.green)),
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    String groupId = await addGroup(
+                      groupName: groupNameController.text,
+                      budget: budgetController.text,
+                      startDate: startDate,
+                      endDate: endDate,
+                    );
+
+                    List<String> userEmails = emailController.text.split(',').map((e) => e.trim()).toList();
+                    addUsersToGroup(groupId, userEmails, groupNameController.text, widget.userId);
+
+                    Navigator.of(dialogContext).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Group successfully added"))
+                    );
+                    groupNameController.clear();
+                    emailController.clear();
+                    budgetController.clear();
+                    startDate = null;
+                    endDate = null;
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Failed to add group: $e"))
+                    );
+                  }
+                }
+              },
+            ),
+          ],
         );
       },
     );
+  },
+);
+
+  
   }
 
 
@@ -176,14 +205,11 @@ class GroupScreenPage extends State<GroupScreen> {
     await userGroup;  
   }
 
-
-
-
-  @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Groups'),
+        title: Text('Groups', style: TextStyle(color: Colors.white)), // Text style can be adjusted here
+        backgroundColor: Colors.blueGrey, // Adjusting AppBar color
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: userGroup,
@@ -193,67 +219,71 @@ class GroupScreenPage extends State<GroupScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text("Error loading groups: ${snapshot.error}"));
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return  RefreshIndicator(
-            onRefresh: fetchGroups,  
-            child: ListView(
-              children: snapshot.data!.map((item) {
+            return RefreshIndicator(
+              onRefresh: fetchGroups,
+              child: ListView.separated(
+                separatorBuilder: (_, __) => Divider(height: 1),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var item = snapshot.data![index];
                   return InkWell(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => GroupDetails(groupId: item['groupId']),
+                          builder: (context) => GroupDetails(groupId: item['groupId'], userId: widget.userId),
                         ),
                       );
                     },
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 5,
-                    margin: EdgeInsets.all(10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: <Widget>[
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(
-                              assetImages[Random().nextInt(assetImages.length)],
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 4,
+                      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: <Widget>[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                assetImages[Random().nextInt(assetImages.length)],
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  item['groupName'],
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                            SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    item['groupName'],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  "Group ID: ${item['groupId']}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade600,
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Group ID: ${item['groupId']}",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
+                  );
+                },
+              ),
             );
           } else {
             return Center(child: Text("No Groups"));
@@ -262,8 +292,9 @@ class GroupScreenPage extends State<GroupScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddGroupDialog,
+        backgroundColor: Colors.blueGrey, 
         tooltip: 'Add Group',
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.white), 
       ),
     );
   }
