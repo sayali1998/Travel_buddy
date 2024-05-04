@@ -76,6 +76,14 @@ class UserRegister extends State<UserRegisterScreen> {
                     backgroundColor: Colors.grey[200],
                   ),
                 ),
+                const Text(
+                  "Tap on Image to upload new Image",
+                  style: TextStyle(
+                    fontSize: 10, 
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal, 
+                  ),
+                ),
                 SizedBox(height: 20),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Username', border: OutlineInputBorder()),

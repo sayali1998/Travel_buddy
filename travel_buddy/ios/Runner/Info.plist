@@ -62,5 +62,10 @@
 	<string>googlemaps</string>
 	<string>comgooglemaps</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to the microphone for voice control.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app needs access to speech recognition for voice commands.</string>
+
 </dict>
 </plist>
