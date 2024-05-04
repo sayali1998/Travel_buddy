@@ -188,6 +188,7 @@ Widget build(BuildContext context) {
       ),
       markers: _markers,
       polylines: _polylines,
+      mapType: MapType.satellite, 
     ),
     floatingActionButton: Column(
       mainAxisAlignment: MainAxisAlignment.end,

@@ -126,6 +126,8 @@ double getNormalizedRating(dynamic rating) {
   }
 }
 
+
+//fetchRegionId(value);
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -138,7 +140,6 @@ Widget build(BuildContext context) {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white, // Change this color to match your theme
               borderRadius: BorderRadius.circular(30.0),
               boxShadow: [
                 BoxShadow(
@@ -152,27 +153,32 @@ Widget build(BuildContext context) {
             child: TextField(
               controller: _locationController,
               decoration: InputDecoration(
-                labelText: 'Enter a location',
-                labelStyle: TextStyle(
-                  fontSize: 16, // Set the size as per your design
-                  color: Colors.grey[600], // Adjust the color to match your theme
+                    labelText: 'Search',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, color: Colors.white),  // Icon color
+                      onPressed: () => fetchRegionId(_locationController.text),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[800],  // Dark fill color
+                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                  ),
+                  onSubmitted: (value) {
+                    fetchRegionId(value);
+                  },
+                  style: TextStyle(color: Colors.white),  // Text color
                 ),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search, color: Colors.blue), // Adjust icon color to match your theme
-                  onPressed: () => fetchRegionId(_locationController.text),
-                ),
-                filled: true,
-                fillColor: Colors.transparent, // Keep it transparent to let the container's color show
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none, // No border
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Adjust padding to change the field's height
-              ),
-              onSubmitted: (value) {
-                fetchRegionId(value);
-              },
-            ),
           ),
         ),
         Expanded( // Ensure the ListView is wrapped in an Expanded widget
