@@ -125,11 +125,11 @@ class ExplorePageScreen extends State<ExplorePage> {
                   decoration: InputDecoration(
                     labelText: 'Search',
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.search), 
+                      icon: Icon(Icons.search, color: Colors.white),  // Icon color
                       onPressed: () => handleSearch(_searchController.text),
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Colors.grey[800],  // Dark fill color
                     contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -137,7 +137,7 @@ class ExplorePageScreen extends State<ExplorePage> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
@@ -147,6 +147,7 @@ class ExplorePageScreen extends State<ExplorePage> {
                   onSubmitted: (value) {
                     handleSearch(value);
                   },
+                  style: TextStyle(color: Colors.white),  // Text color
                 ),
               ),
             ),
@@ -155,17 +156,17 @@ class ExplorePageScreen extends State<ExplorePage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Categories', style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.left),
+                  child: Text('Categories', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white), textAlign: TextAlign.left),
                 ),
                 SizedBox(height: 50, child: _buildCategoryList()),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Top Places', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.left),
+                  child: Text('Top Places', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white), textAlign: TextAlign.left),
                 ),
                 SizedBox(height: 215, child: CategoryItem(categoryList:_category, categoryType: _selectedCategoryType, userId: widget.userId,)),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Hidden Gems', style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.left),
+                  child: Text('Hidden Gems', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white), textAlign: TextAlign.left),
                 ),
                 SizedBox(height: 200, child: FirestoreItemList(city: _currentCity)),
               ],
@@ -203,11 +204,11 @@ class ExplorePageScreen extends State<ExplorePage> {
               child: Chip(
                 avatar: Icon(categories[index]['icon'], color: Colors.white),
                 label: Text(categories[index]['name'], style: TextStyle(color: Colors.white)),
-                backgroundColor: Colors.amber,
+                backgroundColor: Colors.deepPurple,  // Adjusted for dark theme
                 padding: EdgeInsets.all(8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.amber),
+                  side: BorderSide(color: Colors.deepPurple),
                 ),
               ),
             ),

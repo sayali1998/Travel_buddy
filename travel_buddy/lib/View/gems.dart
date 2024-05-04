@@ -28,7 +28,7 @@ class _FirestoreItemListState extends State<FirestoreItemList> {
         }
 
         return ListView.builder(
-          scrollDirection: Axis.horizontal,
+          scrollDirection: Axis.vertical,
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var item = snapshot.data!.docs[index].data() as Map<String, dynamic>;
@@ -45,12 +45,12 @@ class _FirestoreItemListState extends State<FirestoreItemList> {
         // add to group in firebase
       },
       child: Card(
-        child: Column(
+        child: Row(
           children: [
             Image.network(
               item['image_url'] ?? 'assets/destination.png',
-              width: 160,
-              height: 120,
+              width: 150,
+              height: 100,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Image.asset('assets/destination.png', width: 160, height: 120, fit: BoxFit.cover);

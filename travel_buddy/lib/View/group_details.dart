@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:travel_buddy/View/flight_booking.dart';
 import 'package:travel_buddy/View/hotel_booking.dart';
-import 'package:travel_buddy/View/map_view.dart';
+import 'package:travel_buddy/View/maps.dart';
 import 'package:travel_buddy/ViewModel/firebase_functions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GroupDetails extends StatefulWidget {
   final String groupId;
@@ -106,6 +107,7 @@ class _GroupDetailsState extends State<GroupDetails> {
                   ),
                 ),
                 ..._buildHotelBookings(groupDetails),
+                ..._buildPlaces(groupDetails),
               ],
             );
           } else {
@@ -121,6 +123,7 @@ class _GroupDetailsState extends State<GroupDetails> {
     );
   }
 
+
 List<Widget> _buildHotelBookings(Map<String, dynamic>? groupDetails) {
   if (groupDetails?['hotelBookings'] == null) return [];
   return [
@@ -128,25 +131,58 @@ List<Widget> _buildHotelBookings(Map<String, dynamic>? groupDetails) {
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: Text('Hotel Bookings:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
     ),
-    ...groupDetails!['hotelBookings'].map<Widget>((booking) => Card(
-      elevation: 2.0,
-      child: ListTile(
-        title: Text(booking['name']),
-        subtitle: Text('Rating: ${booking['rating']} | Price: ${booking['price']}'),
-        leading: booking['image_url'] != null ? Image.network(booking['image_url'], width: 50, height: 50, fit: BoxFit.cover) : null,
-        trailing: IconButton(
-          icon: Icon(Icons.directions),
-          onPressed: () {
-            Navigator.push(
+    ...groupDetails!['hotelBookings'].map<Widget>((booking) {
+      return Card(
+        elevation: 2.0,
+        child: ListTile(
+          title: Text(booking['name']),
+          subtitle: Text('Rating: ${booking['rating']} | Price: ${booking['price']}'),
+          leading: booking['image_url'] != null ? Image.network(booking['image_url'], width: 50, height: 50, fit: BoxFit.cover) : null,
+          trailing: IconButton(
+            icon: Icon(Icons.directions),
+            onPressed: ()  {
+              Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MapViewPage(destinationLat: booking['latitude'], destinationLng: booking['longitude'])),
-            );
-          },
+              MaterialPageRoute(builder: (context) => MapScreen(lat:booking['latitude'], long: booking['longitude'])),
+              );
+            },
+          ),
         ),
-      ),
-    )).toList(),
+      );
+    }).toList(),
   ];
 }
+
+
+List<Widget> _buildPlaces(Map<String, dynamic>? groupDetails) {
+  if (groupDetails?['placesData'] == null) return [];
+  return [
+    Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: Text('Places Shortlisted:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+    ),
+    ...groupDetails!['placesData'].map<Widget>((place) {
+      return Card(
+      elevation: 2.0,
+      child: ListTile(
+        title: Text(place['name']),
+        leading: place['image_url'] != null ? Image.network(place['image_url'], width: 50, height: 50, fit: BoxFit.cover) : null,
+        trailing: IconButton(
+          icon: Icon(Icons.directions),
+          onPressed: ()  {
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MapScreen(lat:place['latitude'], long: place['longitude'])),
+              );
+            },
+        ),
+      ),
+    );
+  }).toList(),
+    
+  ];
+}
+
 
 
 

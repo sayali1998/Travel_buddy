@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:travel_buddy/View/home.dart';
 import 'package:travel_buddy/View/register.dart';
@@ -13,16 +15,34 @@ class UserLogin extends StatefulWidget {
   State<UserLogin> createState() => UserLoginPage();
 }
 
-class UserLoginPage extends State<UserLogin> {
+class UserLoginPage extends State<UserLogin> with TickerProviderStateMixin{
+  late AnimationController _controller;
+
+
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
   bool _isLoading = false;
 
-  @override
+
+    @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+     _checkLoginStatus();
+    _controller = AnimationController(
+    vsync: this,
+    duration: Duration(seconds: 1),
+  );
+  _controller.addListener(() {
+    
+  });
+  _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -91,8 +111,11 @@ class UserLoginPage extends State<UserLogin> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                Image.asset('assets/destination.png', width: 100, height: 100),
-                SizedBox(height: 40),
+                Image.asset(
+                  'assets/destination.png',
+                  width: 200,
+                  height: 200,
+                ),
                 Text(
                   'Welcome Back!',
                   textAlign: TextAlign.center,

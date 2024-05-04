@@ -174,14 +174,27 @@ Future<Map<String, dynamic>?> fetchGroupDetailsForUser(String userId, String gro
         .doc(groupId)
         .collection('HotelBookings')
         .get();
-    
+
+    QuerySnapshot placesSnapshot = await firestore
+        .collection('groups')
+        .doc(groupId)
+        .collection('places')
+        .get();
+
+
     List<Map<String, dynamic>> hotelBookings = [];
     for (var doc in hotelBookingsSnapshot.docs) {
       hotelBookings.add(doc.data() as Map<String, dynamic>);
     }
 
+    List<Map<String, dynamic>> placesData = [];
+    for (var doc in placesSnapshot.docs) {
+      placesData.add(doc.data() as Map<String, dynamic>);
+    }
+
     Map<String, dynamic> groupDetails = groupSnapshot.data() as Map<String, dynamic>;
     groupDetails['hotelBookings'] = hotelBookings; 
+    groupDetails['placesData'] = placesData; 
     return groupDetails;
   } catch (e) {
     print('Error fetching group details: $e');
@@ -216,13 +229,15 @@ Future<void> uploadHiddenGem({
 }
 
 
-Future<void> addDestination(String groupId, String placeName) async {
-  print("Attempting to add destination. Group ID: $groupId, Place Name: $placeName");
+Future<void> addDestination(String groupId, String placeName, String image_url, dynamic place) async {
   try {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference places = firestore.collection('groups').doc(groupId).collection('places');
     await places.add({
       'name': placeName,
+      'image_url': image_url, 
+      'latitude': place['location']['latitude'],
+      'longitude': place['location']['longitude']
     });
   } catch (e) {
     print('Failed to add destination: $e');

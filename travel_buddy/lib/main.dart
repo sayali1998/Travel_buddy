@@ -16,8 +16,35 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Travel Buddy',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        brightness: Brightness.dark,  // Set the overall brightness to dark
+        primaryColor: Colors.deepPurple,  // Primary color for the app
+        scaffoldBackgroundColor: Colors.grey[900],  // Background color for major parts of the app
+        appBarTheme: AppBarTheme(
+          color: Colors.deepPurple,  // Background color for AppBars
+          elevation: 4,  // Shadow cast by the AppBar
+        ),
+        colorScheme: ColorScheme.dark(
+          primary: Colors.deepPurple,  // Primary color in the color scheme
+          secondary: Colors.deepOrange,  // Secondary (accent) color in the color scheme
+        ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.deepPurple,  // Background color of Material buttons
+          textTheme: ButtonTextTheme.primary,  // Text theme for buttons based on the brightness
+        ),
+        textTheme: TextTheme(
+          headline1: TextStyle(color: Colors.white),  // Headline styles for better readability on dark background
+          bodyText1: TextStyle(color: Colors.white70),  // Body text style
+        ),
+        inputDecorationTheme: InputDecorationTheme(  // Theme for input fields
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.deepPurple),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.deepOrange),
+          ),
+          labelStyle: TextStyle(color: Colors.deepOrange),
+        ),
+        useMaterial3: true,  
       ),
       home: const UserLogin(title: "Login")
     );

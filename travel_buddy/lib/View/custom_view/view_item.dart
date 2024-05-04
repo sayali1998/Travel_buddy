@@ -73,13 +73,14 @@ Widget buildCard(String imageUrl, dynamic place) {
                       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                         return PopupMenuButton<String>(
                           onSelected: (String result) {
-                            print("Selected group ID: $result");
-                            // Handle your action here, such as adding destination
-                          },
+                          },                
                           itemBuilder: (BuildContext context) => snapshot.data!
                             .map((group) => PopupMenuItem<String>(
-                              value: group['id'],
+                              value: group['groupId'],
                               child: Text(group['groupName']),
+                              onTap: () => {
+                                addDestination(group['groupId'], place['displayName']['text'], imageUrl, place)
+                              },
                             ))
                             .toList(),
                           icon: const Icon(Icons.more_vert),

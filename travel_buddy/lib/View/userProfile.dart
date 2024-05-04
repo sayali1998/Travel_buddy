@@ -50,9 +50,8 @@ class UserProfile extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFFAFAFA),
         elevation: 0, 
-        title: Text('Profile', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text('Profile', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
@@ -61,7 +60,6 @@ class UserProfile extends State<UserProfileScreen> {
           ),
         ],
       ),
-      backgroundColor: Colors.white, 
       body: userDetails == null
         ? Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
@@ -69,7 +67,6 @@ class UserProfile extends State<UserProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                color: Color(0xFFFAFAFA), 
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,7 +87,7 @@ class UserProfile extends State<UserProfileScreen> {
                           ),
                     SizedBox(height: 10),
                     Text(userDetails!['username'] ?? 'N/A', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    Text(userDetails!['email'] ?? 'N/A', style: TextStyle(color: Colors.black54)),
+                    Text(userDetails!['email'] ?? 'N/A'),
                   ],
                 ),
               ),

@@ -12,9 +12,9 @@ class UserInfoRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         children: [
-          Text(label, style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           SizedBox(width: 10),
-          Text(value, style: TextStyle(color: Colors.black54, fontSize: 16)),
+          Text(value, style: TextStyle(fontSize: 16)),
         ],
       ),
     );

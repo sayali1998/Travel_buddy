@@ -67,8 +67,7 @@ class RegisterScreen extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-              Image.asset('assets/destination.png', width: 100, height: 100),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              Image.asset('assets/destination.png', width: 200, height: 200),
               Text(
                 'Create Your Account',
                 style: TextStyle(

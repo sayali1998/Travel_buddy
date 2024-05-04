@@ -25,6 +25,9 @@ class GroupScreenPage extends State<GroupScreen> {
   final List<String> assetImages = [
     'assets/group1.png',
     'assets/group2.png',
+    'assets/group3.png',
+    'assets/group4.png',
+    'assets/group5.png',
   ];
 
   @override
@@ -208,8 +211,7 @@ class GroupScreenPage extends State<GroupScreen> {
 Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Groups', style: TextStyle(color: Colors.white)), // Text style can be adjusted here
-        backgroundColor: Colors.blueGrey, // Adjusting AppBar color
+        title: Text('Groups', style: TextStyle(color: Colors.white)), 
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: userGroup,
@@ -221,8 +223,7 @@ Widget build(BuildContext context) {
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return RefreshIndicator(
               onRefresh: fetchGroups,
-              child: ListView.separated(
-                separatorBuilder: (_, __) => Divider(height: 1),
+              child: ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   var item = snapshot.data![index];
@@ -292,9 +293,8 @@ Widget build(BuildContext context) {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddGroupDialog,
-        backgroundColor: Colors.blueGrey, 
         tooltip: 'Add Group',
-        child: Icon(Icons.add, color: Colors.white), 
+        child: Icon(Icons.add), 
       ),
     );
   }
